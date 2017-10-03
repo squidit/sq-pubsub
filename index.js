@@ -1,1 +1,1 @@
-module.exports = require('./src/sq-pubusb')
+module.exports = require('./src/sq-pubsub')
