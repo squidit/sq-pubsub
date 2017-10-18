@@ -10,8 +10,6 @@
     - [Funções](#funções)
       - [Ouvir um tópico](#ouvir-um-tópico)
       - [Publicar uma mensagem](#publicar-uma-mensagem)
-  - [Configurações](#configurações)
-    - [Exemplo .env:](#exemplo-env)
 
 <!-- /TOC -->
 
@@ -60,14 +58,4 @@ Se esta função for executada todos os listeners de todas as filas irão ser re
 PubSub.publishMessage(TOPIC, { mensagem: 'teste' })
   .then((newMessage) => console.log(newMessage))
   .catch(() => console.error('erro'))
-```
-
-## Configurações
-Use o .env ou exporte para as variáveis de ambiente:
-
-- GCLOUD_PROJECT
-
-### Exemplo .env:
-```sh
-GCLOUD_PROJECT=squid-apis
 ```
