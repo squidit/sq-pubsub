@@ -13,8 +13,7 @@ class SQPubSub {
     let subscription = this._pubsub.subscription(subscriptionName)
 
     const handleMessage = (message) => {
-      message.ack()
-      cb(JSON.parse(message.data.toString()), null)
+      cb(message, null)
     }
 
     const handleError = (err) => { cb(null, err) }
@@ -33,6 +32,16 @@ class SQPubSub {
   unlisten (subscription, handleMessage, handleError) {
     subscription.removeListener('message', handleMessage)
     subscription.removeListener('error', handleError)
+  }
+
+  ack (message) {
+    console.log(`Message #${message.id} acknowledged with AckID ${message.ackId}`)
+    return message.ack()
+  }
+
+  nack (message) {
+    console.log(`Message #${message.id} has been marked as not acknowledged by the user`)
+    return message.nack()
   }
 
 }
