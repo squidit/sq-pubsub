@@ -1,41 +1,40 @@
 const PubSub = require('@google-cloud/pubsub')
-const { GCLOUD_PROJECT } = process.env
 
-const pubsub = PubSub({
-  projectId: GCLOUD_PROJECT
-})
-
-function listenMessages (subscriptionName, cb) {
-  console.log(`Listening ${subscriptionName}...`)
-  let subscription = pubsub.subscription(subscriptionName)
-
-  const handleMessage = (message) => {
-    message.ack()
-
-    const aux = JSON.parse(message.data.toString())
-    cb(null, aux)
+class SQPubSub {
+  constructor (GceProjectName, GceKeyFileName) {
+    this._pubsub = PubSub({
+      projectId: GceProjectName,
+      keyFileName: GceKeyFileName
+    })
   }
 
-  const handleError = (err) => {
-    cb(err)
+  listenMessages (subscriptionName, cb) {
+    console.log(`Listening ${subscriptionName}...`)
+    let subscription = this._pubsub.subscription(subscriptionName)
+
+    const handleMessage = (message) => {
+      message.ack()
+      cb(JSON.parse(message.data.toString()), null)
+    }
+
+    const handleError = (err) => { cb(null, err) }
+
+    subscription.on('message', handleMessage)
+    subscription.on('error', handleError)
+
+    return this.unlisten(subscription, handleMessage, handleError)
   }
 
-  subscription.on('message', handleMessage)
-  subscription.on('error', handleError)
+  publishMessage (topicName, data) {
+    const publisher = this._pubsub.topic(topicName).publisher()
+    return publisher.publish(Buffer.from(JSON.stringify(data)))
+  }
 
-  return () => {
+  unlisten (subscription, handleMessage, handleError) {
     subscription.removeListener('message', handleMessage)
     subscription.removeListener('error', handleError)
-    subscription = undefined
   }
+
 }
 
-function publishMessage (topicName, data) {
-  const publisher = pubsub.topic(topicName).publisher()
-  return publisher.publish(Buffer.from(JSON.stringify(data)))
-}
-
-module.exports = {
-  listenMessages,
-  publishMessage
-}
+module.exports = SQPubSub
