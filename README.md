@@ -26,6 +26,15 @@ const SqPubsub = require('sq-pubsub')
 const PubSub = new SqPubsub('project-name', 'path/to/file/credentials.json')
 ```
 
+If you wish to enable or disable the verbose logging just pass a third parameter with a boolean value:
+
+```js
+const PubSub = new SqPubsub('project-name', 'path/to/file/credentials.json', true) // Enables verbose logging
+const PubSub = new SqPubsub('project-name', 'path/to/file/credentials.json', false) // Disables verbose logging
+```
+
+This defaults to `false`
+
 ### Listening to a subscription
 
 ```js

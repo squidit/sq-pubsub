@@ -14,14 +14,26 @@ class SQPubSub {
    *
    * @param {String} GceProjectName Project name on GCE
    * @param {String} GceKeyFileName Project JSON credentials file path
+   * @param {bool} verbose Enables or disables verbose logging (defaults to false)
    * @constructor
    * @see {@link https://github.com/squidit/sq-pubsub#using|Documentation}
    */
-  constructor (GceProjectName, GceKeyFileName) {
+  constructor (GceProjectName, GceKeyFileName, verbose = false) {
     this._pubsub = PubSub({
       projectId: GceProjectName,
       keyFileName: GceKeyFileName
     })
+    this._verbose = verbose
+  }
+
+  /**
+   * Internal log structure
+   * @param {String} message Message to be logged
+   * @private
+   */
+  _logger (message) {
+    if (this._verbose) return console.log(message)
+    return
   }
 
   /**
@@ -35,7 +47,7 @@ class SQPubSub {
    * @public
    */
   listenMessages (subscriptionName, cb, autoAck = false) {
-    console.log(`Listening ${subscriptionName}...`)
+    this._logger(`Listening ${subscriptionName}...`)
     let subscription = this._pubsub.subscription(subscriptionName)
 
     const handleMessage = (message) => {
@@ -43,7 +55,8 @@ class SQPubSub {
       cb(message, null)
     }
 
-    const handleError = (err) => { cb(null, err) }
+    const handleError = (err) => {
+      cb(null, err)}
 
     subscription.on('message', handleMessage)
     subscription.on('error', handleError)
@@ -82,7 +95,7 @@ class SQPubSub {
    * @see {@link https://github.com/squidit/sq-pubsub#ack-or-nack-a-message|Documentation}
    */
   ack (message) {
-    console.log(`Message #${message.id} acknowledged with AckID ${message.ackId}`)
+    this._logger(`Message #${message.id} acknowledged with AckID ${message.ackId}`)
     return message.ack()
   }
 
@@ -93,7 +106,7 @@ class SQPubSub {
    * @see {@link https://github.com/squidit/sq-pubsub#ack-or-nack-a-message|Documentation}
    */
   nack (message) {
-    console.log(`Message #${message.id} has been marked as not acknowledged by the user`)
+    this._logger(`Message #${message.id} has been marked as not acknowledged by the user`)
     return message.nack()
   }
 }
