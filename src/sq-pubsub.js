@@ -39,7 +39,7 @@ class SQPubSub {
     let subscription = this._pubsub.subscription(subscriptionName)
 
     const handleMessage = (message) => {
-      if (autoAck) this.ack(message) // Se a flag de acknowledge estiver ativa então já manda a notificação
+      if (autoAck) this.ack(message) // If ack message is true then autoAck
       cb(message, null)
     }
 
