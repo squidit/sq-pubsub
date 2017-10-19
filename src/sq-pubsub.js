@@ -21,7 +21,7 @@ class SQPubSub {
     subscription.on('message', handleMessage)
     subscription.on('error', handleError)
 
-    return this.unlisten(subscription, handleMessage, handleError)
+    return subscription
   }
 
   publishMessage (topicName, data) {
@@ -29,9 +29,9 @@ class SQPubSub {
     return publisher.publish(Buffer.from(JSON.stringify(data)))
   }
 
-  unlisten (subscription, handleMessage, handleError) {
-    subscription.removeListener('message', handleMessage)
-    subscription.removeListener('error', handleError)
+  unlisten (subscription) {
+    subscription.removeListener('message', subscription._events.message)
+    subscription.removeListener('error', subscription._events.error)
   }
 
   ack (message) {
@@ -43,7 +43,6 @@ class SQPubSub {
     console.log(`Message #${message.id} has been marked as not acknowledged by the user`)
     return message.nack()
   }
-
 }
 
 module.exports = SQPubSub

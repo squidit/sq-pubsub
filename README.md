@@ -24,8 +24,8 @@ $ npm install github:squidit/sq-pubsub --save
 ### Importação
 
 ```js
-const sq_pubsub = require('sq-pubsub')
-const PubSub = new sq_pubsub('nome-do-projeto', 'caminho/para/arquivo/credentials.json')
+const SqPubsub = require('sq-pubsub')
+const PubSub = new SqPubsub('nome-do-projeto', 'caminho/para/arquivo/credentials.json')
 ```
 
 ### Funções
