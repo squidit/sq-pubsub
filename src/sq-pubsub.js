@@ -16,7 +16,7 @@ class SQPubSub {
    * @param {String} GceKeyFileName Project JSON credentials file path
    * @param {bool} verbose Enables or disables verbose logging (defaults to false)
    * @constructor
-   * @see {@link https://github.com/squidit/sq-pubsub#using|Documentation}
+   * @see https://github.com/squidit/sq-pubsub#using
    */
   constructor (GceProjectName, GceKeyFileName, verbose = false) {
     this._pubsub = PubSub({
@@ -42,8 +42,8 @@ class SQPubSub {
    * @param {String} subscriptionName Name of the subscription
    * @param {Function} cb Callback function with the signature: `cb(message, err)`
    * @param {bool} autoAck Should the message be acknowledged upon receival? Defaults to false
-   * @see {@link https://github.com/squidit/sq-pubsub#listening-to-a-subscription|Documentation}
-   * @see {@link https://github.com/squidit/sq-pubsub#autoack|AutoAck Documentation}
+   * @see https://github.com/squidit/sq-pubsub#listening-to-a-subscription
+   * @see https://github.com/squidit/sq-pubsub#autoack|AutoAck
    * @public
    */
   listenMessages (subscriptionName, cb, autoAck = false) {
@@ -68,7 +68,7 @@ class SQPubSub {
    * Publishes a new message to a topic
    * @param {String} topicName Topic name on Pubsub
    * @param {any} data Data to be sent
-   * @see {@link https://github.com/squidit/sq-pubsub#publish-a-message|Documentation}
+   * @see https://github.com/squidit/sq-pubsub#publish-a-message
    * @public
    */
   publishMessage (topicName, data) {
@@ -80,7 +80,7 @@ class SQPubSub {
    * Removes all listeners from a subscription
    * @param {Object} subscription Subscription object returned by ListenMessages
    * @public
-   * @see {@link https://github.com/squidit/sq-pubsub#unlistening-a-subscription|Documentation}
+   * @see https://github.com/squidit/sq-pubsub#unlistening-a-subscription
    */
   unlisten (subscription) {
     subscription.removeListener('message', subscription._events.message)
@@ -92,7 +92,7 @@ class SQPubSub {
    * Acknowledges a message as received
    * @param {Object} message Message object returned by the callback
    * @public
-   * @see {@link https://github.com/squidit/sq-pubsub#ack-or-nack-a-message|Documentation}
+   * @see https://github.com/squidit/sq-pubsub#ack-or-nack-a-message
    */
   ack (message) {
     this._logger(`Message #${message.id} acknowledged with AckID ${message.ackId}`)
@@ -103,7 +103,7 @@ class SQPubSub {
    * Not acknowledges a message as received
    * @param {Object} message Message object returned by the callback
    * @public
-   * @see {@link https://github.com/squidit/sq-pubsub#ack-or-nack-a-message|Documentation}
+   * @see https://github.com/squidit/sq-pubsub#ack-or-nack-a-message
    */
   nack (message) {
     this._logger(`Message #${message.id} has been marked as not acknowledged by the user`)
