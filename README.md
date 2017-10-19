@@ -4,35 +4,29 @@
 <!-- TOC -->
 
 - [sq-pubsub](#sq-pubsub)
-  - [Instalando](#instalando)
-  - [Uso](#uso)
-    - [Importação](#importação)
-    - [Funções](#funções)
-      - [Ouvir uma subscription](#ouvir-uma-subscription)
-      - [Deixar de ouvir uma subscription](#deixar-de-ouvir-uma-subscription)
-        - [Marcar ou não uma mensagem como recebida](#marcar-ou-não-uma-mensagem-como-recebida)
-          - [AutoAck](#autoack)
-      - [Publicar uma mensagem](#publicar-uma-mensagem)
+  - [Installing](#installing)
+  - [Using](#using)
+    - [Listening to a subscription](#listening-to-a-subscription)
+    - [Unlistening a subscription](#unlistening-a-subscription)
+      - [Ack or Nack a message](#ack-or-nack-a-message)
+        - [AutoAck](#autoack)
+    - [Publish a message](#publish-a-message)
 
 <!-- /TOC -->
 
-## Instalando
+## Installing
 ```sh
 $ npm install github:squidit/sq-pubsub --save
 ```
 
-## Uso
-
-### Importação
+## Using
 
 ```js
 const SqPubsub = require('sq-pubsub')
-const PubSub = new SqPubsub('nome-do-projeto', 'caminho/para/arquivo/credentials.json')
+const PubSub = new SqPubsub('project-name', 'path/to/file/credentials.json')
 ```
 
-### Funções
-
-#### Ouvir uma subscription
+### Listening to a subscription
 
 ```js
 PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
@@ -44,19 +38,19 @@ PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
 })
 ```
 
-O objeto `message` tem as seguintes propriedades:
+The `message` object has the following properties:
 
-* `message.id`: ID da mensagem.
-* `message.ackId`: ID usado para receber a mensagem com sucesso
-* `message.data`: Conteúdo da mensagem. Isto é um Buffer, então é necessário que o usuário utilize `message.data.toString()` para modificar o valor.
-* `message.attributes`: Atributos da mensagem
-* `message.timestamp`: Timestamp de quando o __PubSub__ recebeu a mensagem
+* `message.id`: The ID of the message.
+* `message.ackId`: ID used to acknowledge the message as received.
+* `message.data`: Message contents, which is a buffer, so it's necessary to use `message.data.toString()` to parse the value.
+* `message.attributes`: Message atributes.
+* `message.timestamp`: Timestamp of when __PubSub__ received the message.
 
-Esta função retorna a instancia da subscription.
+This returns an instance of `subscription`.
 
-#### Deixar de ouvir uma subscription
+### Unlistening a subscription
 
-A função `unlisten` remove todos os subscribers do pubsub.
+The `unlisten` function removes all listeners from the subscription.
 
 ```js
 const subscription = PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
@@ -67,20 +61,18 @@ const subscription = PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
   }
 })
 
-// Remove os listeners
+// Remove listeners
 PubSub.unlisten(subscription)
 ```
 
-Se esta função for executada todos os listeners de todas as filas irão ser removidos.
+#### Ack or Nack a message
 
-##### Marcar ou não uma mensagem como recebida
+It is rather __important__ to mark a message as acknowledged for two reasons:
 
-É __importante__ marcar uma mensagem como recebida por dois motivos:
+- Once the message is marked as acknowledged, it is removed from the topic queue
+- A listener which has received a message (and haven't yet marked it as _acknowledged_) __cannot__ receive new messages until the last message is acknowledged or the acknowledge timeout has ended.
 
-- Uma vez que a mensagem é marcada como recebida ela é removida da fila do tópico
-- Um listener que recebeu uma mensagem e ainda não a marcou como recebida __não__ pode receber novas mensagens até que a última mensagem seja marcada como recebida com sucesso
-
-Quando uma mensagem deve ser recebida com sucesso, execute a função `ack`. Da mesma forma quando uma mensagem deve receber o sinal de que ela não foi recebida com sucesso (chamado de `nack`) a função `nack` pode ser usada.
+To acknowledge a message, use the `ack` function. Same thing goes when a message does not need to be acknowledged (called `nack`), using the `nack` function.
 
 ```js
 PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
@@ -94,20 +86,20 @@ PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
 })
 ```
 
-###### AutoAck
+##### AutoAck
 
-Da mesma forma é possível utilizar a flag `autoAck` para automaticamente receber __todas__ as mensagens da subscription automaticamente:
+It is also possible to use the `autoAck` flag to automatically acknowledge __all__ messages upon received:
 
 ```js
-PubSub.listenMessages(SUBSCRIPTION, cb(message, err), true) // Parâmetro autoAck como true (padrão é false)
+PubSub.listenMessages(SUBSCRIPTION, cb(message, err), true) // autoAck as true (defaults to false)
 ```
 
-#### Publicar uma mensagem
+### Publish a message
 
-Nesta parte é necessário usar o _tópico_ do pubsub ao invés da subscription.
+We need to use the _topic_ instead of the _subscription_:
 
 ```js
-PubSub.publishMessage(TOPIC, { mensagem: 'teste' })
-  .then((newMessage) => console.log(newMessage))
-  .catch(() => console.error('erro'))
+PubSub.publishMessage(TOPIC, { message: 'test' })
+  .then((response) => console.log(response))
+  .catch((err) => console.error(err))
 ```
