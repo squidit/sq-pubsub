@@ -19,6 +19,8 @@ class SQPubSub {
    * @see https://github.com/squidit/sq-pubsub#using
    */
   constructor (GceProjectName, GceKeyFileName, verbose = false) {
+    if (!GceProjectName || !GceKeyFileName) throw new Error('The project name and the key file name cannot be empty')
+
     this._pubsub = PubSub({
       projectId: GceProjectName,
       keyFileName: GceKeyFileName
@@ -47,6 +49,9 @@ class SQPubSub {
    * @public
    */
   listenMessages (subscriptionName, cb, autoAck = false) {
+    if (!subscriptionName) throw new Error('Subscription name cannot be empty')
+    if (!cb) throw new Error('There must be a callback to handle the messages')
+
     this._logger(`Listening ${subscriptionName}...`)
     let subscription = this._pubsub.subscription(subscriptionName)
 
@@ -55,8 +60,7 @@ class SQPubSub {
       cb(message, null)
     }
 
-    const handleError = (err) => {
-      cb(null, err)}
+    const handleError = (err) => { cb(null, err) }
 
     subscription.on('message', handleMessage)
     subscription.on('error', handleError)
@@ -72,6 +76,7 @@ class SQPubSub {
    * @public
    */
   publishMessage (topicName, data) {
+    if (!topicName) throw new Error('Topic name must not be empty')
     const publisher = this._pubsub.topic(topicName).publisher()
     return publisher.publish(Buffer.from(JSON.stringify(data)))
   }
@@ -83,6 +88,7 @@ class SQPubSub {
    * @see https://github.com/squidit/sq-pubsub#unlistening-a-subscription
    */
   unlisten (subscription) {
+    if (!subscription) throw new Error('Subscription must be an pubsub subscription object to unlisten')
     subscription.removeListener('message', subscription._events.message)
     subscription.removeListener('error', subscription._events.error)
     return this
@@ -95,6 +101,7 @@ class SQPubSub {
    * @see https://github.com/squidit/sq-pubsub#ack-or-nack-a-message
    */
   ack (message) {
+    if (!message) throw new Error('Message must be an pubsub message object to acknowledge')
     this._logger(`Message #${message.id} acknowledged with AckID ${message.ackId}`)
     return message.ack()
   }
@@ -106,6 +113,7 @@ class SQPubSub {
    * @see https://github.com/squidit/sq-pubsub#ack-or-nack-a-message
    */
   nack (message) {
+    if (!message) throw new Error('Message must be an pubsub message object to nacknowledge')
     this._logger(`Message #${message.id} has been marked as not acknowledged by the user`)
     return message.nack()
   }
