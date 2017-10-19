@@ -8,8 +8,10 @@
   - [Uso](#uso)
     - [Importação](#importação)
     - [Funções](#funções)
-      - [Ouvir um tópico](#ouvir-um-tópico)
+      - [Ouvir uma subscription](#ouvir-uma-subscription)
+      - [Deixar de ouvir uma subscription](#deixar-de-ouvir-uma-subscription)
         - [Marcar ou não uma mensagem como recebida](#marcar-ou-não-uma-mensagem-como-recebida)
+          - [AutoAck](#autoack)
       - [Publicar uma mensagem](#publicar-uma-mensagem)
 
 <!-- /TOC -->
@@ -30,7 +32,7 @@ const PubSub = new SqPubsub('nome-do-projeto', 'caminho/para/arquivo/credentials
 
 ### Funções
 
-#### Ouvir um tópico
+#### Ouvir uma subscription
 
 ```js
 PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
@@ -46,17 +48,27 @@ O objeto `message` tem as seguintes propriedades:
 
 * `message.id`: ID da mensagem.
 * `message.ackId`: ID usado para receber a mensagem com sucesso
-* `message.data`: Conteúdo da mensagem.
+* `message.data`: Conteúdo da mensagem. Isto é um Buffer, então é necessário que o usuário utilize `message.data.toString()` para modificar o valor.
 * `message.attributes`: Atributos da mensagem
 * `message.timestamp`: Timestamp de quando o __PubSub__ recebeu a mensagem
 
-Esta função retorna uma outra função chamada unlisten que tem uma assinatura como a seguinte:
+Esta função retorna a instancia da subscription.
+
+#### Deixar de ouvir uma subscription
+
+A função `unlisten` remove todos os subscribers do pubsub.
 
 ```js
-unlisten (subscription, handleMessage, handleError) {
-  subscription.removeListener('message', handleMessage)
-  subscription.removeListener('error', handleError)
-}
+const subscription = PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
+  if (!err) {
+    console.log(message.data)
+  } else if (err) {
+    console.error(err)
+  }
+})
+
+// Remove os listeners
+PubSub.unlisten(subscription)
 ```
 
 Se esta função for executada todos os listeners de todas as filas irão ser removidos.
@@ -82,7 +94,17 @@ PubSub.listenMessages(SUBSCRIPTION, (message, err) => {
 })
 ```
 
+###### AutoAck
+
+Da mesma forma é possível utilizar a flag `autoAck` para automaticamente receber __todas__ as mensagens da subscription automaticamente:
+
+```js
+PubSub.listenMessages(SUBSCRIPTION, cb(message, err), true) // Parâmetro autoAck como true (padrão é false)
+```
+
 #### Publicar uma mensagem
+
+Nesta parte é necessário usar o _tópico_ do pubsub ao invés da subscription.
 
 ```js
 PubSub.publishMessage(TOPIC, { mensagem: 'teste' })

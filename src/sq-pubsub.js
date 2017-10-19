@@ -8,11 +8,12 @@ class SQPubSub {
     })
   }
 
-  listenMessages (subscriptionName, cb) {
+  listenMessages (subscriptionName, cb, autoAck = false) {
     console.log(`Listening ${subscriptionName}...`)
     let subscription = this._pubsub.subscription(subscriptionName)
 
     const handleMessage = (message) => {
+      if (autoAck) this.ack(message) // Se a flag de acknowledge estiver ativa então já manda a notificação
       cb(message, null)
     }
 
@@ -32,6 +33,7 @@ class SQPubSub {
   unlisten (subscription) {
     subscription.removeListener('message', subscription._events.message)
     subscription.removeListener('error', subscription._events.error)
+    return this
   }
 
   ack (message) {
