@@ -17,6 +17,7 @@ class SQPubSub {
    * @param {bool} verbose Enables or disables verbose logging (defaults to false)
    * @constructor
    * @see https://github.com/squidit/sq-pubsub#using
+   * @returns {Class} A PubSub instance
    */
   constructor (GceProjectName, GceKeyFileName, verbose = false) {
     if (!GceProjectName || !GceKeyFileName) throw new Error('The project name and the key file name cannot be empty')
@@ -32,6 +33,7 @@ class SQPubSub {
    * Internal log structure
    * @param {String} message Message to be logged
    * @private
+   * @returns void
    */
   _logger (message) {
     if (this._verbose) return console.log(message)
@@ -47,6 +49,7 @@ class SQPubSub {
    * @see https://github.com/squidit/sq-pubsub#listening-to-a-subscription
    * @see https://github.com/squidit/sq-pubsub#autoack|AutoAck
    * @public
+   * @returns {Object} PubSub subscription object
    */
   listenMessages (subscriptionName, cb, autoAck = false) {
     if (!subscriptionName) throw new Error('Subscription name cannot be empty')
@@ -74,6 +77,7 @@ class SQPubSub {
    * @param {any} data Data to be sent
    * @see https://github.com/squidit/sq-pubsub#publish-a-message
    * @public
+   * @returns {Promise} Promise from publish
    */
   publishMessage (topicName, data) {
     if (!topicName) throw new Error('Topic name must not be empty')
@@ -86,6 +90,7 @@ class SQPubSub {
    * @param {Object} subscription Subscription object returned by ListenMessages
    * @public
    * @see https://github.com/squidit/sq-pubsub#unlistening-a-subscription
+   * @returns {Class} This PubSub instance
    */
   unlisten (subscription) {
     if (!subscription) throw new Error('Subscription must be an pubsub subscription object to unlisten')
@@ -99,6 +104,7 @@ class SQPubSub {
    * @param {Object} message Message object returned by the callback
    * @public
    * @see https://github.com/squidit/sq-pubsub#ack-or-nack-a-message
+   * @returns void
    */
   ack (message) {
     if (!message) throw new Error('Message must be an pubsub message object to acknowledge')
@@ -111,6 +117,7 @@ class SQPubSub {
    * @param {Object} message Message object returned by the callback
    * @public
    * @see https://github.com/squidit/sq-pubsub#ack-or-nack-a-message
+   * @returns void
    */
   nack (message) {
     if (!message) throw new Error('Message must be an pubsub message object to nacknowledge')
