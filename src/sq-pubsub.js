@@ -55,7 +55,7 @@ class SQPubSub {
     if (!cb) throw new Error('There must be a callback to handle the messages')
 
     this._logger(`Listening ${subscriptionName}...`)
-    let subscription = this._pubsub.subscription(subscriptionName, { maxMessages })
+    let subscription = this._pubsub.subscription(subscriptionName, { flowControl: { maxMessages } })
 
     const handleMessage = (message) => {
       if (autoAck) this.ack(message) // If ack message is true then autoAck
