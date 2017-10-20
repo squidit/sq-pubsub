@@ -1,6 +1,6 @@
 {
   "name": "sq-pubsub",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "GCloud PubSub wrapper",
   "main": "index.js",
   "scripts": {

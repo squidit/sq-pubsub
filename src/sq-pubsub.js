@@ -37,7 +37,6 @@ class SQPubSub {
    */
   _logger (message) {
     if (this._verbose) return console.log(message)
-    return
   }
 
   /**
@@ -51,12 +50,12 @@ class SQPubSub {
    * @public
    * @returns {Object} PubSub subscription object
    */
-  listenMessages (subscriptionName, cb, autoAck = false) {
+  listenMessages (subscriptionName, cb, autoAck = false, maxMessages = 50) {
     if (!subscriptionName) throw new Error('Subscription name cannot be empty')
     if (!cb) throw new Error('There must be a callback to handle the messages')
 
     this._logger(`Listening ${subscriptionName}...`)
-    let subscription = this._pubsub.subscription(subscriptionName)
+    let subscription = this._pubsub.subscription(subscriptionName, { maxMessages })
 
     const handleMessage = (message) => {
       if (autoAck) this.ack(message) // If ack message is true then autoAck
