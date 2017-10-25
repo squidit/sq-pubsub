@@ -45,6 +45,7 @@ class SQPubSub {
    * @param {String} subscriptionName Name of the subscription
    * @param {Function} cb Callback function with the signature: `cb(message, err)`
    * @param {bool} autoAck Should the message be acknowledged upon receival? Defaults to false
+   * @param {int} maxMessage Max number of messages PubSub will receive at once. Defaults to 50
    * @see https://github.com/squidit/sq-pubsub#listening-to-a-subscription
    * @see https://github.com/squidit/sq-pubsub#autoack|AutoAck
    * @public
