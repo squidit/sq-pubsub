@@ -10,6 +10,7 @@
     - [Unlistening a subscription](#unlistening-a-subscription)
       - [Ack or Nack a message](#ack-or-nack-a-message)
         - [AutoAck](#autoack)
+        - [Message debounce](#message-debounce)
     - [Publish a message](#publish-a-message)
 
 <!-- /TOC -->
@@ -103,6 +104,13 @@ It is also possible to use the `autoAck` flag to automatically acknowledge __all
 PubSub.listenMessages(SUBSCRIPTION, cb(message, err), true) // autoAck as true (defaults to false)
 ```
 
+##### Message debounce
+
+PubSub can debounce the number of messages it receives at once in order to reduce the number of active processing if you need to. For this, you need only to assign a last parameter with the number of messages you want to receive at once:
+
+```js
+PubSub.listenMessages(SUBSCRIPTION, cb(message, err), false, 5) // 5 messages at a time (defaults to 50)
+```
 ### Publish a message
 
 We need to use the _topic_ instead of the _subscription_:
