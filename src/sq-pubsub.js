@@ -24,7 +24,7 @@ class SQPubSub {
 
     this._pubsub = PubSub({
       projectId: GceProjectName,
-      keyFileName: GceKeyFileName
+      keyFilename: GceKeyFileName
     })
     this._verbose = verbose
   }
